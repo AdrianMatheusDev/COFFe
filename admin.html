@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel A'M Systems | Gestão</title>
+    <style>
+        :root { --cor-primaria: #b89768; --cor-fundo: #f4f4f5; --texto: #333; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--cor-fundo); color: var(--texto); margin: 0; display: flex; height: 100vh; }
+        
+        /* Menu Lateral */
+        .sidebar { width: 250px; background-color: #1a1918; color: white; padding: 2rem 0; display: flex; flex-direction: column; }
+        .sidebar h2 { text-align: center; color: var(--cor-primaria); margin-bottom: 2rem; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; }
+        .menu-btn { background: none; border: none; color: #aaa; padding: 1rem 2rem; text-align: left; font-size: 1rem; cursor: pointer; transition: 0.3s; width: 100%; border-left: 4px solid transparent; }
+        .menu-btn:hover { background-color: rgba(255,255,255,0.05); color: white; }
+        .menu-btn.active { background-color: rgba(255,255,255,0.1); color: var(--cor-primaria); border-left-color: var(--cor-primaria); }
+
+        /* Área de Conteúdo */
+        .main-content { flex: 1; padding: 3rem; overflow-y: auto; scroll-behavior: smooth; }
+        .tab-panel { display: none; background: #fff; padding: 2.5rem; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); max-width: 800px; margin: 0 auto; }
+        .tab-panel.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Formulários */
+        h3 { margin-top: 0; border-bottom: 2px solid var(--cor-primaria); padding-bottom: 0.5rem; margin-bottom: 1.5rem; color: #1a1918; }
+        .row { display: flex; gap: 1rem; margin-bottom: 1.2rem; }
+        .col { flex: 1; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 600; font-size: 0.85rem; color: #555; text-transform: uppercase; }
+        input[type="text"], input[type="number"], select, textarea { width: 100%; padding: 0.75rem; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-family: inherit; }
+        input[type="color"] { width: 100%; height: 45px; cursor: pointer; border: 1px solid #ddd; padding: 2px; }
+        textarea { resize: vertical; min-height: 100px; }
+        
+        .toggle-container { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem; }
+        .toggle-container input { width: 20px; height: 20px; cursor: pointer; }
+
+        button.btn-salvar { background-color: var(--cor-primaria); color: white; border: none; padding: 1rem 2rem; font-size: 1rem; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; width: 100%; }
+        button.btn-salvar:hover { background-color: #9c7f55; }
+        
+        button.btn-cancelar { background-color: #9ca3af; color: white; border: none; padding: 1rem 2rem; font-size: 1rem; border-radius: 4px; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s; display: none; width: 100%; }
+        button.btn-cancelar:hover { background-color: #6b7280; }
+
+        .botoes-form { display: flex; gap: 1rem; }
+
+        /* Tabela de Produtos */
+        .table-container { margin-top: 2rem; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+        th, td { text-align: left; padding: 1rem; border-bottom: 1px solid #eee; }
+        th { background-color: #f9f9f9; color: #555; text-transform: uppercase; font-size: 0.8rem; }
+        
+        /* Botões de Ação na Tabela */
+        .btn-acao { border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-right: 0.5rem; font-weight: bold; transition: 0.3s; }
+        .btn-editar { background-color: #e0f2fe; color: #0284c7; }
+        .btn-editar:hover { background-color: #bae6fd; }
+        .btn-excluir { background-color: #fee2e2; color: #991b1b; }
+        .btn-excluir:hover { background-color: #fecaca; }
+        
+        /* Etiquetas de Status */
+        .badge { padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
+        .badge.ativo { background-color: #dcfce3; color: #166534; }
+        .badge.inativo { background-color: #f3f4f6; color: #4b5563; }
+
+        /* Toast de Mensagem */
+        #mensagem-toast { position: fixed; bottom: 20px; right: 20px; padding: 1rem 2.5rem; border-radius: 4px; color: white; display: none; box-shadow: 0 4px 15px rgba(0,0,0,0.2); z-index: 1000; font-weight: bold; letter-spacing: 1px; }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <h2>Painel Dama</h2>
+        <button class="menu-btn active" onclick="abrirAba('aba-loja')">Configurações Gerais</button>
+        <button class="menu-btn" onclick="abrirAba('aba-sobre')">Sobre Nós</button>
+        <button class="menu-btn" onclick="abrirAba('aba-produtos')">Meus Produtos</button>
+    </aside>
+
+    <main class="main-content">
+
+        <section id="aba-loja" class="tab-panel active">
+            <h3>Dados e Aparência</h3>
+            <form id="form-loja">
+                <div class="toggle-container">
+                    <input type="checkbox" id="status_aberto">
+                    <label for="status_aberto" style="margin:0; font-size: 1rem;">Loja Aberta para Pedidos</label>
+                </div>
+                
+                <div class="row">
+                    <div class="col">
+                        <label>Nome da Confeitaria</label>
+                        <input type="text" id="nome" required>
+                    </div>
+                    <div class="col">
+                        <label>WhatsApp (Somente números)</label>
+                        <input type="text" id="whatsapp" placeholder="Ex: 5511999999999" required>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label>Link da Logo (Fundo Transparente)</label>
+                        <input type="text" id="logo_url" placeholder="https://...">
+                    </div>
+                    <div class="col">
+                        <label>Link do Instagram</label>
+                        <input type="text" id="instagram_url" placeholder="https://instagram.com/sualoja">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label>Link da Imagem de Fundo (Banner Principal)</label>
+                        <input type="text" id="banner_url" placeholder="https://...">
+                    </div>
+                    <div class="col">
+                        <label>Cor Principal do Site</label>
+                        <input type="color" id="cor_primaria">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col">
+                        <label>Slogan (Frase de Efeito no Banner)</label>
+                        <input type="text" id="slogan">
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-salvar">Salvar Configurações</button>
+            </form>
+        </section>
+
+        <section id="aba-sobre" class="tab-panel">
+            <h3>Nossa História</h3>
+            <form id="form-sobre">
+                <div class="row">
+                    <div class="col">
+                        <label>Link da Foto (Sua ou da Equipe)</label>
+                        <input type="text" id="sobre_nos_imagem_url" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label>Texto Contando sua História</label>
+                        <textarea id="sobre_nos_texto" placeholder="Escreva aqui como a confeitaria começou, seus valores..."></textarea>
+                    </div>
+                </div>
+                <button type="submit" class="btn-salvar">Salvar Sobre Nós</button>
+            </form>
+        </section>
+
+        <section id="aba-produtos" class="tab-panel">
+            <h3 id="titulo-form-produto">Adicionar Novo Produto</h3>
+            <form id="form-produto">
+                <div class="row">
+                    <div class="col">
+                        <label>Nome do Produto</label>
+                        <input type="text" id="prod_nome" required>
+                    </div>
+                    <div class="col">
+                        <label>Preço (R$)</label>
+                        <input type="number" step="0.01" id="prod_preco" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label>Categoria</label>
+                        <input type="text" id="prod_categoria" placeholder="Ex: Bolos, Doces Finos, Bebidas" required>
+                    </div>
+                    <div class="col">
+                        <label>Link da Imagem do Produto</label>
+                        <input type="text" id="prod_imagem" placeholder="https://...">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <label>Descrição (Ingredientes, Peso)</label>
+                        <textarea id="prod_descricao" style="min-height: 60px;"></textarea>
+                    </div>
+                </div>
+                
+                <div class="row">
+                    <div class="toggle-container">
+                        <input type="checkbox" id="prod_destaque">
+                        <label for="prod_destaque" style="margin:0;">Produto em Destaque</label>
+                    </div>
+                    <div class="toggle-container">
+                        <input type="checkbox" id="prod_disponivel" checked>
+                        <label for="prod_disponivel" style="margin:0;">Disponível em Estoque</label>
+                    </div>
+                </div>
+
+                <div class="botoes-form">
+                    <button type="submit" id="btn-salvar-produto" class="btn-salvar">Cadastrar Produto</button>
+                    <button type="button" id="btn-cancelar-edicao" class="btn-cancelar" onclick="cancelarEdicao()">Cancelar Edição</button>
+                </div>
+            </form>
+
+            <div class="table-container">
+                <h3>Produtos Cadastrados</h3>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Produto</th>
+                            <th>Categoria</th>
+                            <th>Preço</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lista-produtos">
+                        </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="mensagem-toast">Salvo com sucesso!</div>
+
+    <script type="module">
+        import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
+
+        const SUPABASE_URL = 'https://uzqhgobbqufoctfysnju.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6cWhnb2JicXVmb2N0Znlzbmp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2ODM4MjksImV4cCI6MjA4NzI1OTgyOX0.pF6HrVGRcxxfPAB342mhad3LSFlHJlMN9TBnE1ZnEEs';
+        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        
+        const SLUG_DA_LOJA = 'dama';
+        let LOJA_ID_GLOBAL = null;
+        
+        // Variáveis Globais para Controle de Edição
+        window.PRODUTOS_GLOBAIS = []; 
+        let PRODUTO_EDITANDO_ID = null;
+
+        // Controle de Abas
+        window.abrirAba = function(idAba) {
+            document.querySelectorAll('.tab-panel').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(idAba).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
+        // Sistema de Toast (Avisos Visuais)
+        function mostrarMensagem(texto, tipo = 'sucesso') {
+            const toast = document.getElementById('mensagem-toast');
+            toast.innerText = texto;
+            toast.style.backgroundColor = tipo === 'sucesso' ? '#16a34a' : '#dc2626';
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 3000);
+        }
+
+        // Carregar Configurações da Loja
+        async function carregarDadosGlobais() {
+            const { data: loja } = await supabase.from('loja_config').select('*').eq('slug', SLUG_DA_LOJA).single();
+            if (loja) {
+                LOJA_ID_GLOBAL = loja.id;
+                
+                // Aba 1
+                document.getElementById('nome').value = loja.nome || '';
+                document.getElementById('whatsapp').value = loja.whatsapp || '';
+                document.getElementById('logo_url').value = loja.logo_url || '';
+                document.getElementById('instagram_url').value = loja.instagram_url || '';
+                document.getElementById('banner_url').value = loja.banner_url || '';
+                document.getElementById('cor_primaria').value = loja.cor_primaria || '#b89768';
+                document.getElementById('slogan').value = loja.slogan || '';
+                document.getElementById('status_aberto').checked = loja.status_aberto !== false;
+
+                // Aba 2
+                document.getElementById('sobre_nos_texto').value = loja.sobre_nos_texto || '';
+                document.getElementById('sobre_nos_imagem_url').value = loja.sobre_nos_imagem_url || '';
+            }
+            carregarTabelaProdutos();
+        }
+
+        // Carregar Lista de Produtos na Tabela
+        async function carregarTabelaProdutos() {
+            if (!LOJA_ID_GLOBAL) return;
+            const { data: produtos } = await supabase.from('loja_produtos').select('*').eq('loja_id', LOJA_ID_GLOBAL).order('categoria', { ascending: true });
+            
+            window.PRODUTOS_GLOBAIS = produtos; 
+            
+            const tbody = document.getElementById('lista-produtos');
+            tbody.innerHTML = '';
+            
+            produtos.forEach(prod => {
+                const tr = document.createElement('tr');
+                const statusHtml = prod.disponivel 
+                    ? `<span class="badge ativo">Em Estoque</span>` 
+                    : `<span class="badge inativo">Esgotado</span>`;
+                
+                tr.innerHTML = `
+                    <td><strong>${prod.nome}</strong></td>
+                    <td>${prod.categoria}</td>
+                    <td>R$ ${prod.preco.toFixed(2)}</td>
+                    <td>${statusHtml}</td>
+                    <td>
+                        <button class="btn-acao btn-editar" onclick="prepararEdicao('${prod.id}')">Editar</button>
+                        <button class="btn-acao btn-excluir" onclick="deletarProduto('${prod.id}')">Excluir</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Salvar Configurações (Aba 1)
+        document.getElementById('form-loja').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const atualizacao = {
+                nome: document.getElementById('nome').value,
+                whatsapp: document.getElementById('whatsapp').value,
+                logo_url: document.getElementById('logo_url').value,
+                instagram_url: document.getElementById('instagram_url').value,
+                banner_url: document.getElementById('banner_url').value,
+                cor_primaria: document.getElementById('cor_primaria').value,
+                slogan: document.getElementById('slogan').value,
+                status_aberto: document.getElementById('status_aberto').checked
+            };
+            const { error } = await supabase.from('loja_config').update(atualizacao).eq('id', LOJA_ID_GLOBAL);
+            error ? mostrarMensagem('Erro ao salvar!', 'erro') : mostrarMensagem('Configurações salvas!');
+        });
+
+        // Salvar Sobre Nós (Aba 2)
+        document.getElementById('form-sobre').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const atualizacao = {
+                sobre_nos_texto: document.getElementById('sobre_nos_texto').value,
+                sobre_nos_imagem_url: document.getElementById('sobre_nos_imagem_url').value,
+            };
+            const { error } = await supabase.from('loja_config').update(atualizacao).eq('id', LOJA_ID_GLOBAL);
+            error ? mostrarMensagem('Erro ao salvar!', 'erro') : mostrarMensagem('História salva!');
+        });
+
+        // Preparar Edição de Produto (Puxa os dados para o formulário)
+        window.prepararEdicao = function(idProduto) {
+            const produto = window.PRODUTOS_GLOBAIS.find(p => p.id === idProduto);
+            if (!produto) return;
+
+            PRODUTO_EDITANDO_ID = produto.id;
+            document.getElementById('titulo-form-produto').innerText = `Editando: ${produto.nome}`;
+            
+            document.getElementById('prod_nome').value = produto.nome;
+            document.getElementById('prod_preco').value = produto.preco;
+            document.getElementById('prod_categoria').value = produto.categoria;
+            document.getElementById('prod_imagem').value = produto.imagem_url;
+            document.getElementById('prod_descricao').value = produto.descricao;
+            document.getElementById('prod_destaque').checked = produto.em_destaque;
+            document.getElementById('prod_disponivel').checked = produto.disponivel;
+
+            document.getElementById('btn-salvar-produto').innerText = 'Atualizar Produto';
+            document.getElementById('btn-cancelar-edicao').style.display = 'block';
+
+            document.getElementById('aba-produtos').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Cancelar Edição
+        window.cancelarEdicao = function() {
+            PRODUTO_EDITANDO_ID = null;
+            document.getElementById('titulo-form-produto').innerText = 'Adicionar Novo Produto';
+            document.getElementById('form-produto').reset();
+            document.getElementById('btn-salvar-produto').innerText = 'Cadastrar Produto';
+            document.getElementById('btn-cancelar-edicao').style.display = 'none';
+        }
+
+        // Salvar ou Atualizar Produto (Aba 3)
+        document.getElementById('form-produto').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!LOJA_ID_GLOBAL) return mostrarMensagem('Erro de conexão', 'erro');
+
+            const dadosProduto = {
+                loja_id: LOJA_ID_GLOBAL,
+                nome: document.getElementById('prod_nome').value,
+                preco: parseFloat(document.getElementById('prod_preco').value),
+                categoria: document.getElementById('prod_categoria').value,
+                imagem_url: document.getElementById('prod_imagem').value,
+                descricao: document.getElementById('prod_descricao').value,
+                em_destaque: document.getElementById('prod_destaque').checked,
+                disponivel: document.getElementById('prod_disponivel').checked
+            };
+
+            if (PRODUTO_EDITANDO_ID) {
+                // Atualizar
+                const { error } = await supabase.from('loja_produtos').update(dadosProduto).eq('id', PRODUTO_EDITANDO_ID);
+                if (error) mostrarMensagem('Erro ao atualizar!', 'erro');
+                else {
+                    mostrarMensagem('Produto atualizado!');
+                    cancelarEdicao();
+                    carregarTabelaProdutos();
+                }
+            } else {
+                // Cadastrar Novo
+                const { error } = await supabase.from('loja_produtos').insert([dadosProduto]);
+                if (error) mostrarMensagem('Erro ao cadastrar!', 'erro');
+                else {
+                    mostrarMensagem('Produto cadastrado!');
+                    document.getElementById('form-produto').reset();
+                    carregarTabelaProdutos();
+                }
+            }
+        });
+
+        // Deletar Produto
+        window.deletarProduto = async function(idProduto) {
+            if(confirm('Tem certeza que deseja excluir este produto?')) {
+                const { error } = await supabase.from('loja_produtos').delete().eq('id', idProduto);
+                if (error) mostrarMensagem('Erro ao excluir', 'erro');
+                else {
+                    mostrarMensagem('Produto excluído!');
+                    if(PRODUTO_EDITANDO_ID === idProduto) cancelarEdicao();
+                    carregarTabelaProdutos();
+                }
+            }
+        }
+
+        // Inicia o Painel
+        carregarDadosGlobais();
+    </script>
+</body>
+</html>
