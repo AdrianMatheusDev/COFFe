@@ -43,7 +43,7 @@
         }
 
         /* =========================================
-           2. PAPEL DE PAREDE ANIMADO (WALLPAPER LUXO)
+           2. PAPEL DE PAREDE ANIMADO (LUXO)
         ========================================= */
         .animated-bg {
             position: fixed;
@@ -53,7 +53,7 @@
             height: 100%;
             z-index: -1;
             background-color: var(--cor-primaria);
-            /* Padrão de Diamantes/Textura Premium */
+            /* Padrão de Diamantes super elegante e luxuoso */
             -webkit-mask-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M30 15 L35 30 L30 45 L25 30 Z' fill='%23000' fill-rule='evenodd'/%3E%3C/svg%3E");
             -webkit-mask-size: 80px;
             opacity: 0.04; 
@@ -203,7 +203,7 @@
         .hero-overlay { 
             position: absolute; 
             inset: 0; 
-            background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 60%, var(--cor-fundo) 100%); 
+            background: linear-gradient(180deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0.2) 60%, transparent 100%); 
             z-index: 2; 
         }
 
@@ -250,7 +250,7 @@
             opacity: 0; 
         }
 
-        /* O ESCORRIMENTO (DRIP SVG) */
+        /* ESCORRIMENTO (DRIP SVG) - ADICIONADO */
         .drip-divider { 
             position: absolute; 
             bottom: -1px; 
@@ -271,7 +271,7 @@
         }
 
         /* =========================================
-           6. PRODUTOS E BARRA STICKY
+           6. PRODUTOS E NAVEGAÇÃO STICKY
         ========================================= */
         .menu-container { 
             max-width: 1200px; 
@@ -442,6 +442,9 @@
         .btn-finalizar { background: #25D366; color: white; border: none; width: 100%; padding: 1.2rem; border-radius: 4px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: 0.3s; font-size: 1rem; }
         .btn-finalizar:hover { background: #1ebc59; }
 
+        .toast-notificacao { position: fixed; bottom: 100px; right: 20px; background: var(--texto-escuro); color: white; padding: 1rem 2rem; border-radius: 4px; z-index: 9999; transform: translateY(100px); opacity: 0; transition: all 0.3s; font-weight: bold; }
+        .toast-notificacao.show { transform: translateY(0); opacity: 1; }
+
         /* =========================================
            8. SOBRE NÓS E RODAPÉ
         ========================================= */
@@ -459,9 +462,6 @@
         .btn-instagram { display: inline-flex; justify-content: center; align-items: center; gap: 0.8rem; background-color: transparent; color: var(--cor-primaria); border: 1px solid var(--cor-primaria); padding: 1.2rem 2.5rem; text-transform: uppercase; letter-spacing: 2px; font-size: 0.9rem; transition: all 0.3s; width: 100%; max-width: 350px; text-decoration: none; border-radius: 2px; }
         .btn-instagram:hover { background-color: var(--cor-primaria); color: #fff; }
         .btn-instagram svg { width: 18px; height: 18px; fill: currentColor; }
-
-        .toast-notificacao { position: fixed; bottom: 100px; right: 20px; background: var(--texto-escuro); color: white; padding: 1rem 2rem; border-radius: 4px; z-index: 9999; transform: translateY(100px); opacity: 0; transition: all 0.3s; font-weight: bold; }
-        .toast-notificacao.show { transform: translateY(0); opacity: 1; }
 
         @media (max-width: 768px) {
             .hero-content h1 { font-size: 3rem; }
@@ -580,7 +580,7 @@
         const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6cWhnb2JicXVmb2N0Znlzbmp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2ODM4MjksImV4cCI6MjA4NzI1OTgyOX0.pF6HrVGRcxxfPAB342mhad3LSFlHJlMN9TBnE1ZnEEs';
         const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
         
-        // PEGA O SLUG DO URL DINAMICAMENTE (MULTI-TENANT)
+        // --- LOGICA MULTI-TENANT (PEGA O SLUG DO URL) ---
         const urlParams = new URLSearchParams(window.location.search);
         const SLUG_DA_LOJA = urlParams.get('slug') || 'dama';
 
@@ -591,7 +591,7 @@
             try {
                 // 1. BUSCA A LOJA CORRETA PELO SLUG
                 const { data: loja } = await supabase.from('loja_config').select('*').eq('slug', SLUG_DA_LOJA).single();
-                if (!loja) return alert("Loja não encontrada.");
+                if (!loja) return alert("Estabelecimento não encontrado.");
                 
                 // 2. BUSCA OS PRODUTOS QUE PERTENCEM SOMENTE A ESSA LOJA (loja_id)
                 const { data: produtos } = await supabase.from('loja_produtos').select('*').eq('loja_id', loja.id);
@@ -602,7 +602,7 @@
                 document.documentElement.style.setProperty('--cor-primaria', loja.cor_primaria || '#b89768');
                 document.documentElement.style.setProperty('--cor-fundo', loja.cor_fundo || '#faf9f6');
                 
-                // 4. Aplica Logo ou Nome em Texto no Header
+                // 4. Aplica Logo ou Nome em Texto
                 if (loja.logo_url && loja.logo_url.trim() !== '') {
                     document.getElementById('logo-img').src = loja.logo_url;
                     document.getElementById('logo-img').style.display = 'block';
@@ -611,7 +611,7 @@
                     document.getElementById('logo-text').innerText = loja.nome;
                 }
 
-                // 5. Preenche os Dados do Banner e Rodapé (NOME GIGANTE + SLOGAN)
+                // 5. Preenche os Dados Básicos
                 document.getElementById('hero-bg').src = loja.banner_url || '';
                 document.getElementById('hero-nome').innerText = loja.nome;
                 document.getElementById('hero-title').innerText = loja.slogan || '';
@@ -637,7 +637,7 @@
                 if (loja.sobre_nos_imagem_url) document.getElementById('sobre-img').src = loja.sobre_nos_imagem_url;
                 else document.getElementById('sobre-img-container').style.display = 'none';
 
-                // 8. Renderiza Categorias e Produtos Isolados por Loja
+                // 8. Renderiza os Produtos por Categoria (ISOLADO)
                 const grid = document.getElementById('cardapio');
                 const navBar = document.getElementById('nav-categorias');
                 const categorias = [...new Set(produtos.map(p => p.categoria || 'Outros'))];
@@ -652,6 +652,7 @@
                     const section = document.createElement('div');
                     section.className = 'categoria-section'; section.id = idSlug;
                     section.innerHTML = `<h3 class="categoria-titulo">${cat}</h3><div class="grid-produtos"></div>`;
+                    
                     const divProdutos = section.querySelector('.grid-produtos');
                     
                     produtos.filter(p => (p.categoria || 'Outros') === cat).forEach(prod => {
@@ -714,7 +715,7 @@
             let html = ''; let totalPedido = 0;
             carrinho.forEach(item => {
                 const subtotal = item.qtde * item.preco; totalPedido += subtotal;
-                html += `<div class="item-carrinho"><div class="item-info"><h4>${item.nome}</h4><p>R$ ${subtotal.toFixed(2).replace('.', ',')}</p></div><div class="item-controles"><button onclick="alterarQtde('${item.id}', -1)">-</button><span>${item.qtde}</span><button onclick="alterarQtde('${item.id}', 1)">+</button></div></div>`;
+                html += `<div class="item-carrinho"><div class="item-info"><h4>${item.nome}</h4><p>R$ ${(item.qtde*item.preco).toFixed(2).replace('.',',')}</p></div><div class="item-controles"><button onclick="alterarQtde('${item.id}', -1)">-</button><span>${item.qtde}</span><button onclick="alterarQtde('${item.id}', 1)">+</button></div></div>`;
             });
             divItens.innerHTML = html;
             document.getElementById('valor-total').innerText = `R$ ${totalPedido.toFixed(2).replace('.', ',')}`;
@@ -733,7 +734,7 @@
 
         function mostrarToast() { const toast = document.getElementById('toast'); toast.classList.add('show'); setTimeout(() => toast.classList.remove('show'), 2000); }
 
-        // --- ANIMAÇÕES GSAP E TILT ---
+        // --- ANIMAÇÕES GSAP E EFEITOS ---
         function animarApresentacao() {
             document.getElementById('loader-screen').classList.add('escondido');
             const tl = gsap.timeline();
