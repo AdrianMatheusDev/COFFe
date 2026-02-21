@@ -10,7 +10,7 @@
         
         /* Menu Lateral */
         .sidebar { width: 250px; background-color: #1a1918; color: white; padding: 2rem 0; display: flex; flex-direction: column; }
-        .sidebar h2 { text-align: center; color: var(--cor-primaria); margin-bottom: 2rem; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; }
+        .sidebar h2 { text-align: center; color: var(--cor-primaria); margin-bottom: 2rem; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; padding: 0 10px; }
         .menu-btn { background: none; border: none; color: #aaa; padding: 1rem 2rem; text-align: left; font-size: 1rem; cursor: pointer; transition: 0.3s; width: 100%; border-left: 4px solid transparent; }
         .menu-btn:hover { background-color: rgba(255,255,255,0.05); color: white; }
         .menu-btn.active { background-color: rgba(255,255,255,0.1); color: var(--cor-primaria); border-left-color: var(--cor-primaria); }
@@ -50,9 +50,7 @@
         /* Botões de Ação na Tabela */
         .btn-acao { border: none; padding: 0.4rem 0.8rem; border-radius: 4px; cursor: pointer; font-size: 0.8rem; margin-right: 0.5rem; font-weight: bold; transition: 0.3s; }
         .btn-editar { background-color: #e0f2fe; color: #0284c7; }
-        .btn-editar:hover { background-color: #bae6fd; }
         .btn-excluir { background-color: #fee2e2; color: #991b1b; }
-        .btn-excluir:hover { background-color: #fecaca; }
         
         /* Etiquetas de Status */
         .badge { padding: 0.4rem 0.8rem; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; }
@@ -66,10 +64,12 @@
 <body>
 
     <aside class="sidebar">
-        <h2>Painel Dama</h2>
+        <h2 id="sidebar-title">Carregando...</h2>
         <button class="menu-btn active" onclick="abrirAba('aba-loja')">Configurações Gerais</button>
         <button class="menu-btn" onclick="abrirAba('aba-sobre')">Sobre Nós</button>
         <button class="menu-btn" onclick="abrirAba('aba-produtos')">Meus Produtos</button>
+        <div style="margin-top: auto; padding: 1rem;">
+           
     </aside>
 
     <main class="main-content">
@@ -84,30 +84,30 @@
                 
                 <div class="row">
                     <div class="col">
-                        <label>Nome da Confeitaria</label>
+                        <label>Nome do Estabelecimento</label>
                         <input type="text" id="nome" required>
                     </div>
                     <div class="col">
                         <label>WhatsApp (Somente números)</label>
-                        <input type="text" id="whatsapp" placeholder="Ex: 5511999999999" required>
+                        <input type="text" id="whatsapp" required>
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col">
-                        <label>Link da Logo (Fundo Transparente)</label>
-                        <input type="text" id="logo_url" placeholder="https://...">
+                        <label>Link da Logo</label>
+                        <input type="text" id="logo_url">
                     </div>
                     <div class="col">
                         <label>Link do Instagram</label>
-                        <input type="text" id="instagram_url" placeholder="https://instagram.com/sualoja">
+                        <input type="text" id="instagram_url">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col">
-                        <label>Link da Imagem de Fundo (Banner Principal)</label>
-                        <input type="text" id="banner_url" placeholder="https://...">
+                        <label>Link do Banner Principal</label>
+                        <input type="text" id="banner_url">
                     </div>
                     <div class="col">
                         <label>Cor Principal do Site</label>
@@ -117,7 +117,7 @@
 
                 <div class="row">
                     <div class="col">
-                        <label>Slogan (Frase de Efeito no Banner)</label>
+                        <label>Slogan (Frase no Banner)</label>
                         <input type="text" id="slogan">
                     </div>
                 </div>
@@ -131,14 +131,14 @@
             <form id="form-sobre">
                 <div class="row">
                     <div class="col">
-                        <label>Link da Foto (Sua ou da Equipe)</label>
-                        <input type="text" id="sobre_nos_imagem_url" placeholder="https://...">
+                        <label>Link da Foto da História</label>
+                        <input type="text" id="sobre_nos_imagem_url">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <label>Texto Contando sua História</label>
-                        <textarea id="sobre_nos_texto" placeholder="Escreva aqui como a confeitaria começou, seus valores..."></textarea>
+                        <label>Texto da História</label>
+                        <textarea id="sobre_nos_texto"></textarea>
                     </div>
                 </div>
                 <button type="submit" class="btn-salvar">Salvar Sobre Nós</button>
@@ -161,16 +161,16 @@
                 <div class="row">
                     <div class="col">
                         <label>Categoria</label>
-                        <input type="text" id="prod_categoria" placeholder="Ex: Bolos, Doces Finos, Bebidas" required>
+                        <input type="text" id="prod_categoria" required>
                     </div>
                     <div class="col">
-                        <label>Link da Imagem do Produto</label>
-                        <input type="text" id="prod_imagem" placeholder="https://...">
+                        <label>Link da Imagem</label>
+                        <input type="text" id="prod_imagem">
                     </div>
                 </div>
                 <div class="row">
                     <div class="col">
-                        <label>Descrição (Ingredientes, Peso)</label>
+                        <label>Descrição</label>
                         <textarea id="prod_descricao" style="min-height: 60px;"></textarea>
                     </div>
                 </div>
@@ -178,11 +178,11 @@
                 <div class="row">
                     <div class="toggle-container">
                         <input type="checkbox" id="prod_destaque">
-                        <label for="prod_destaque" style="margin:0;">Produto em Destaque</label>
+                        <label for="prod_destaque" style="margin:0;">Em Destaque</label>
                     </div>
                     <div class="toggle-container">
                         <input type="checkbox" id="prod_disponivel" checked>
-                        <label for="prod_disponivel" style="margin:0;">Disponível em Estoque</label>
+                        <label for="prod_disponivel" style="margin:0;">Disponível</label>
                     </div>
                 </div>
 
@@ -196,16 +196,9 @@
                 <h3>Produtos Cadastrados</h3>
                 <table>
                     <thead>
-                        <tr>
-                            <th>Produto</th>
-                            <th>Categoria</th>
-                            <th>Preço</th>
-                            <th>Status</th>
-                            <th>Ações</th>
-                        </tr>
+                        <tr><th>Produto</th><th>Categoria</th><th>Preço</th><th>Status</th><th>Ações</th></tr>
                     </thead>
-                    <tbody id="lista-produtos">
-                        </tbody>
+                    <tbody id="lista-produtos"></tbody>
                 </table>
             </div>
         </section>
@@ -217,18 +210,16 @@
     <script type="module">
         import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
 
-        const SUPABASE_URL = 'https://uzqhgobbqufoctfysnju.supabase.co';
-        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6cWhnb2JicXVmb2N0Znlzbmp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2ODM4MjksImV4cCI6MjA4NzI1OTgyOX0.pF6HrVGRcxxfPAB342mhad3LSFlHJlMN9TBnE1ZnEEs';
-        const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        const supabase = createClient('https://uzqhgobbqufoctfysnju.supabase.co', 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InV6cWhnb2JicXVmb2N0Znlzbmp1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzE2ODM4MjksImV4cCI6MjA4NzI1OTgyOX0.pF6HrVGRcxxfPAB342mhad3LSFlHJlMN9TBnE1ZnEEs');
         
-        const SLUG_DA_LOJA = 'dama';
+        // --- LOGICA MULTI-TENANT PARA O PAINEL ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const SLUG_DA_LOJA = urlParams.get('slug') || 'dama'; 
         let LOJA_ID_GLOBAL = null;
         
-        // Variáveis Globais para Controle de Edição
         window.PRODUTOS_GLOBAIS = []; 
         let PRODUTO_EDITANDO_ID = null;
 
-        // Controle de Abas
         window.abrirAba = function(idAba) {
             document.querySelectorAll('.tab-panel').forEach(tab => tab.classList.remove('active'));
             document.querySelectorAll('.menu-btn').forEach(btn => btn.classList.remove('active'));
@@ -236,7 +227,6 @@
             event.currentTarget.classList.add('active');
         }
 
-        // Sistema de Toast (Avisos Visuais)
         function mostrarMensagem(texto, tipo = 'sucesso') {
             const toast = document.getElementById('mensagem-toast');
             toast.innerText = texto;
@@ -245,13 +235,14 @@
             setTimeout(() => toast.style.display = 'none', 3000);
         }
 
-        // Carregar Configurações da Loja
         async function carregarDadosGlobais() {
+            // Busca apenas a loja que veio pelo slug do URL
             const { data: loja } = await supabase.from('loja_config').select('*').eq('slug', SLUG_DA_LOJA).single();
+            
             if (loja) {
                 LOJA_ID_GLOBAL = loja.id;
+                document.getElementById('sidebar-title').innerText = `Painel ${loja.nome}`;
                 
-                // Aba 1
                 document.getElementById('nome').value = loja.nome || '';
                 document.getElementById('whatsapp').value = loja.whatsapp || '';
                 document.getElementById('logo_url').value = loja.logo_url || '';
@@ -260,48 +251,42 @@
                 document.getElementById('cor_primaria').value = loja.cor_primaria || '#b89768';
                 document.getElementById('slogan').value = loja.slogan || '';
                 document.getElementById('status_aberto').checked = loja.status_aberto !== false;
-
-                // Aba 2
                 document.getElementById('sobre_nos_texto').value = loja.sobre_nos_texto || '';
                 document.getElementById('sobre_nos_imagem_url').value = loja.sobre_nos_imagem_url || '';
+                
+                carregarTabelaProdutos();
+            } else {
+                alert("Erro: Loja não encontrada no sistema.");
+                window.location.href = 'index.html';
             }
-            carregarTabelaProdutos();
         }
 
-        // Carregar Lista de Produtos na Tabela
         async function carregarTabelaProdutos() {
             if (!LOJA_ID_GLOBAL) return;
-            const { data: produtos } = await supabase.from('loja_produtos').select('*').eq('loja_id', LOJA_ID_GLOBAL).order('categoria', { ascending: true });
-            
+            // Filtra produtos pelo ID da loja carregada
+            const { data: produtos } = await supabase.from('loja_produtos').select('*').eq('loja_id', LOJA_ID_GLOBAL).order('categoria');
             window.PRODUTOS_GLOBAIS = produtos; 
-            
             const tbody = document.getElementById('lista-produtos');
             tbody.innerHTML = '';
             
             produtos.forEach(prod => {
                 const tr = document.createElement('tr');
-                const statusHtml = prod.disponivel 
-                    ? `<span class="badge ativo">Em Estoque</span>` 
-                    : `<span class="badge inativo">Esgotado</span>`;
-                
                 tr.innerHTML = `
                     <td><strong>${prod.nome}</strong></td>
                     <td>${prod.categoria}</td>
                     <td>R$ ${prod.preco.toFixed(2)}</td>
-                    <td>${statusHtml}</td>
+                    <td><span class="badge ${prod.disponivel?'ativo':'inativo'}">${prod.disponivel?'Estoque':'Esgotado'}</span></td>
                     <td>
                         <button class="btn-acao btn-editar" onclick="prepararEdicao('${prod.id}')">Editar</button>
                         <button class="btn-acao btn-excluir" onclick="deletarProduto('${prod.id}')">Excluir</button>
-                    </td>
-                `;
+                    </td>`;
                 tbody.appendChild(tr);
             });
         }
 
-        // Salvar Configurações (Aba 1)
         document.getElementById('form-loja').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const atualizacao = {
+            const up = {
                 nome: document.getElementById('nome').value,
                 whatsapp: document.getElementById('whatsapp').value,
                 logo_url: document.getElementById('logo_url').value,
@@ -311,58 +296,47 @@
                 slogan: document.getElementById('slogan').value,
                 status_aberto: document.getElementById('status_aberto').checked
             };
-            const { error } = await supabase.from('loja_config').update(atualizacao).eq('id', LOJA_ID_GLOBAL);
-            error ? mostrarMensagem('Erro ao salvar!', 'erro') : mostrarMensagem('Configurações salvas!');
+            const { error } = await supabase.from('loja_config').update(up).eq('id', LOJA_ID_GLOBAL);
+            error ? mostrarMensagem('Erro!', 'erro') : mostrarMensagem('Salvo!');
         });
 
-        // Salvar Sobre Nós (Aba 2)
         document.getElementById('form-sobre').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const atualizacao = {
+            const up = {
                 sobre_nos_texto: document.getElementById('sobre_nos_texto').value,
-                sobre_nos_imagem_url: document.getElementById('sobre_nos_imagem_url').value,
+                sobre_nos_imagem_url: document.getElementById('sobre_nos_imagem_url').value
             };
-            const { error } = await supabase.from('loja_config').update(atualizacao).eq('id', LOJA_ID_GLOBAL);
-            error ? mostrarMensagem('Erro ao salvar!', 'erro') : mostrarMensagem('História salva!');
+            const { error } = await supabase.from('loja_config').update(up).eq('id', LOJA_ID_GLOBAL);
+            error ? mostrarMensagem('Erro!', 'erro') : mostrarMensagem('Salvo!');
         });
 
-        // Preparar Edição de Produto (Puxa os dados para o formulário)
-        window.prepararEdicao = function(idProduto) {
-            const produto = window.PRODUTOS_GLOBAIS.find(p => p.id === idProduto);
-            if (!produto) return;
-
-            PRODUTO_EDITANDO_ID = produto.id;
-            document.getElementById('titulo-form-produto').innerText = `Editando: ${produto.nome}`;
-            
-            document.getElementById('prod_nome').value = produto.nome;
-            document.getElementById('prod_preco').value = produto.preco;
-            document.getElementById('prod_categoria').value = produto.categoria;
-            document.getElementById('prod_imagem').value = produto.imagem_url;
-            document.getElementById('prod_descricao').value = produto.descricao;
-            document.getElementById('prod_destaque').checked = produto.em_destaque;
-            document.getElementById('prod_disponivel').checked = produto.disponivel;
-
-            document.getElementById('btn-salvar-produto').innerText = 'Atualizar Produto';
+        window.prepararEdicao = function(id) {
+            const p = window.PRODUTOS_GLOBAIS.find(x => x.id === id);
+            PRODUTO_EDITANDO_ID = p.id;
+            document.getElementById('titulo-form-produto').innerText = `Editando: ${p.nome}`;
+            document.getElementById('prod_nome').value = p.nome;
+            document.getElementById('prod_preco').value = p.preco;
+            document.getElementById('prod_categoria').value = p.categoria;
+            document.getElementById('prod_imagem').value = p.imagem_url;
+            document.getElementById('prod_descricao').value = p.descricao;
+            document.getElementById('prod_destaque').checked = p.em_destaque;
+            document.getElementById('prod_disponivel').checked = p.disponivel;
+            document.getElementById('btn-salvar-produto').innerText = 'Atualizar';
             document.getElementById('btn-cancelar-edicao').style.display = 'block';
-
-            document.getElementById('aba-produtos').scrollIntoView({ behavior: 'smooth' });
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        // Cancelar Edição
         window.cancelarEdicao = function() {
             PRODUTO_EDITANDO_ID = null;
-            document.getElementById('titulo-form-produto').innerText = 'Adicionar Novo Produto';
+            document.getElementById('titulo-form-produto').innerText = 'Novo Produto';
             document.getElementById('form-produto').reset();
-            document.getElementById('btn-salvar-produto').innerText = 'Cadastrar Produto';
+            document.getElementById('btn-salvar-produto').innerText = 'Cadastrar';
             document.getElementById('btn-cancelar-edicao').style.display = 'none';
         }
 
-        // Salvar ou Atualizar Produto (Aba 3)
         document.getElementById('form-produto').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if (!LOJA_ID_GLOBAL) return mostrarMensagem('Erro de conexão', 'erro');
-
-            const dadosProduto = {
+            const dados = {
                 loja_id: LOJA_ID_GLOBAL,
                 nome: document.getElementById('prod_nome').value,
                 preco: parseFloat(document.getElementById('prod_preco').value),
@@ -372,42 +346,22 @@
                 em_destaque: document.getElementById('prod_destaque').checked,
                 disponivel: document.getElementById('prod_disponivel').checked
             };
-
             if (PRODUTO_EDITANDO_ID) {
-                // Atualizar
-                const { error } = await supabase.from('loja_produtos').update(dadosProduto).eq('id', PRODUTO_EDITANDO_ID);
-                if (error) mostrarMensagem('Erro ao atualizar!', 'erro');
-                else {
-                    mostrarMensagem('Produto atualizado!');
-                    cancelarEdicao();
-                    carregarTabelaProdutos();
-                }
+                const { error } = await supabase.from('loja_produtos').update(dados).eq('id', PRODUTO_EDITANDO_ID);
+                if (error) mostrarMensagem('Erro!', 'erro'); else { mostrarMensagem('Atualizado!'); cancelarEdicao(); carregarTabelaProdutos(); }
             } else {
-                // Cadastrar Novo
-                const { error } = await supabase.from('loja_produtos').insert([dadosProduto]);
-                if (error) mostrarMensagem('Erro ao cadastrar!', 'erro');
-                else {
-                    mostrarMensagem('Produto cadastrado!');
-                    document.getElementById('form-produto').reset();
-                    carregarTabelaProdutos();
-                }
+                const { error } = await supabase.from('loja_produtos').insert([dados]);
+                if (error) mostrarMensagem('Erro!', 'erro'); else { mostrarMensagem('Cadastrado!'); document.getElementById('form-produto').reset(); carregarTabelaProdutos(); }
             }
         });
 
-        // Deletar Produto
-        window.deletarProduto = async function(idProduto) {
-            if(confirm('Tem certeza que deseja excluir este produto?')) {
-                const { error } = await supabase.from('loja_produtos').delete().eq('id', idProduto);
-                if (error) mostrarMensagem('Erro ao excluir', 'erro');
-                else {
-                    mostrarMensagem('Produto excluído!');
-                    if(PRODUTO_EDITANDO_ID === idProduto) cancelarEdicao();
-                    carregarTabelaProdutos();
-                }
+        window.deletarProduto = async function(id) {
+            if(confirm('Excluir produto?')) {
+                const { error } = await supabase.from('loja_produtos').delete().eq('id', id);
+                if (!error) { mostrarMensagem('Excluído!'); carregarTabelaProdutos(); }
             }
         }
 
-        // Inicia o Painel
         carregarDadosGlobais();
     </script>
 </body>
